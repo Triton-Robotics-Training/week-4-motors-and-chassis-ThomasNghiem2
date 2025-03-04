@@ -205,10 +205,41 @@ void remoteRead(bool debug = false){
 int main(){
     
     //SETUP CODE HERE
-
+    short id = 1;
+    const std::string name = "";
+    enum motorType type = M3508;
+    enum CANHandler::CANBus bus = CANHandler::CANBUS_1;
+    DJIMotor* motor = new DJIMotor(id, bus, type, name);
+    int data;
+    int xval;
+    int pow_val;
+    int spd_val;
+    int pos_val;
+    
     while(true){ //main loop
 
         //MAIN CODE HERE
+        remote.read();
+        xval = remote.leftX();
+        switch(remote.leftSwitch()) {
+            case Remote::SwitchState::UP: 
+                pow_val = 20 * xval;
+                motor->setPower(pow_val);
+                data = motor->getData(motorDataType::POWER);
+                printf("leftX: %d, Data: %d\n", xval, data);
+                break;
+            case Remote::SwitchState::MID:
+                spd_val = 5 * xval;
+                motor->setSpeed(spd_val);
+                data = motor->getData(motorDataType::POWER);
+                printf("leftX: %d, Data: %d\n", xval, data);
+            case Remote::SwitchState::DOWN:
+                pos_val = 10 * xval;
+                motor->setPosition(pos_val);
+                data = motor->getData(motorDataType::POWER);
+                printf("leftX: %d, Data: %d\n", xval, data);
+        }
 
     }
+    return 0;
 }
